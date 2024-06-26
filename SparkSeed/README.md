@@ -1,0 +1,1 @@
+First alpha version of the SparkEngine is SparkSeed, here I will be learning how to use the libraries, and dealing whith all the problems of creating a game engine on my own, I hope in order to have it easier in the SparkEngine creation process whenever I finish this one!
