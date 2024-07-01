@@ -5,9 +5,9 @@
 #ifndef SCALEWINDOW_h_
 #define SCALEWINDOW_h_
 
-#define SCREEN_WIDTH 10
-#define SCREEN_HEIGHT 10
-#define WINDOW_SCALE 40  // Scale the window size for better visibility
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+#define WINDOW_SCALE 1  // Scale the window size for better visibility
 
 void print_pixel(int x, int y, SDL_Renderer* renderer, int color);
 

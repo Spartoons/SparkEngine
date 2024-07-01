@@ -1,11 +1,12 @@
 #include "scalewindow.h"
 #include "scalewindow.c"
+#include "character.c"
 
 // Function declarations
 void renderMap(SDL_Renderer* renderer, int map[SCREEN_HEIGHT][SCREEN_WIDTH]);
-SDL_Texture* loadTexture(const char* path, SDL_Renderer* renderer);
 
 int main(int argc, char* argv[]) {
+    // Initialize:
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
         return 1;
@@ -50,36 +51,17 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // Load character
+    Character character = loadCharacter("character.png", renderer, 100, 100);
+
     int running = 1;
     SDL_Event e;
-    int x = 2;
-    int y = 2;
-    int color = 0;
 
     while (running) {
-
-
+        // Handle events
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 running = 0;
-            } else if (e.type == SDL_KEYDOWN) {
-                switch (e.key.keysym.sym) {
-                    case SDLK_UP:
-                        y = (y > 0) ? y - 1 : y;
-                        break;
-                    case SDLK_DOWN:
-                        y = (y < SCREEN_HEIGHT - 1) ? y + 1 : y;
-                        break;
-                    case SDLK_LEFT:
-                        x = (x > 0) ? x - 1 : x;
-                        break;
-                    case SDLK_RIGHT:
-                        x = (x < SCREEN_WIDTH - 1) ? x + 1 : x;
-                        break;
-                    case SDLK_SPACE:
-                        color = (color < 7) ? color + 1 : 0;
-                        break;
-                }
             }
         }
 
@@ -90,14 +72,19 @@ int main(int argc, char* argv[]) {
         // Render the background image
         SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
 
-        print_pixel(x, y, renderer, color);
+        // Render the character
+        renderCharacter(renderer, &character, 200, 200);
 
         // Update the screen
         SDL_RenderPresent(renderer);
     }
 
+    // Clean up
+    SDL_DestroyTexture(backgroundTexture);
+    SDL_DestroyTexture(character.texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    IMG_Quit();
     SDL_Quit();
 
     return 0;
@@ -105,6 +92,7 @@ int main(int argc, char* argv[]) {
 
 
 // Functions
+
 void renderMap(SDL_Renderer* renderer, int map[SCREEN_HEIGHT][SCREEN_WIDTH]) {
     for (int y = 0; y < SCREEN_HEIGHT; y++) {
         for (int x = 0; x < SCREEN_WIDTH; x++) {
@@ -117,19 +105,4 @@ void renderMap(SDL_Renderer* renderer, int map[SCREEN_HEIGHT][SCREEN_WIDTH]) {
             SDL_RenderFillRect(renderer, &pixel);
         }
     }
-}
-
-SDL_Texture* loadTexture(const char* path, SDL_Renderer* renderer) {
-    SDL_Texture* newTexture = NULL;
-    SDL_Surface* loadedSurface = IMG_Load(path);
-    if (loadedSurface == NULL) {
-        printf("Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError());
-    } else {
-        newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-        if (newTexture == NULL) {
-            printf("Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError());
-        }
-        SDL_FreeSurface(loadedSurface);
-    }
-    return newTexture;
 }
